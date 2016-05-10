@@ -1,6 +1,6 @@
 'use strict';
 
-var debug     = require('debug')('bundle');
+var debug     = require('debug')('heya-io:bundle');
 var request   = require('request');
 var par       = require('heya-async').par;
 var promisify = require('heya-async/promisify');
@@ -91,7 +91,7 @@ function instrumentBundle (opt) {
 				if (newOptions.method !== 'GET') {
 					var contentType = newOptions.headers['Content-Type'];
 					if (!contentType) {
-						if (data && typeof data == 'string') {
+						if (data) {
 							newOptions.headers['Content-Type'] = 'application/json';
 							newOptions.body = JSON.stringify(data);
 						}
@@ -103,8 +103,8 @@ function instrumentBundle (opt) {
 					newOptions.headers.Accept = 'application/json';
 				}
 				newOptions.headers.Cookie = req.get('Cookie');
-				debug('<= ' + newOptions.method + ' ' + url + ' => ' + newOptions.url +
-					(newOptions.body && newOptions.body.length ? ' (payload: ' + newOptions.body.length + ' bytes of ' + newOptions.headers('Content-Type') + ')' : ''));
+				debug('<= ' + newOptions.method + ' ' + url + (url !== newOptions.url ? ' => ' + newOptions.url : '') +
+					(newOptions.body && newOptions.body.length ? ' (payload: ' + newOptions.body.length + ' bytes of ' + newOptions.headers['Content-Type'] + ')' : ''));
 				return newOptions;
 			}),
 			promises = requests.map(function (options) {
