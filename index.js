@@ -26,8 +26,14 @@ function instrumentBundle (opt) {
 	var maxRequests = opt.maxRequests || 20,
 		isUrlAcceptable = opt.isUrlAcceptable,
 		resolveUrl = opt.resolveUrl,
-		processResult = opt.processResult || identity,
-		setHeaders = opt.setHeaders || defaultSetHeaders;
+		setHeaders = opt.setHeaders || defaultSetHeaders,
+		processResult  = opt.processResult  || identity,
+		processFailure = opt.processFailure || identity,
+		processBundle  = opt.processBundle  || identity,
+		onBundleStart  = opt.onBundleStart  || identity,
+		onBundleFinish = opt.onBundleFinish || identity,
+		onItemStart  = opt.onItemStart  || identity,
+		onItemFinish = opt.onItemFinish || identity;
 	return function bundle (req, res) {
 		debug('=> ' + req.method + ' ' + req.url +
 			  (req.body && req.body.length ? ' (payload: ' + req.body.length + ' bytes of ' + req.get('content-type') + ')' : ''));
@@ -57,7 +63,9 @@ function instrumentBundle (opt) {
 			return;
 		}
 		debug('=> RECEIVED bundle of ' + payload.length + ': ' + payload.map(function (o) { return o.url || o; }).join(', '));
-		var requests = payload.map(function (options) {
+		onBundleStart(req);
+		var requests = payload.map(function (options, index) {
+				onItemStart(req, options, index, payload);
 				var newOptions = {}, url, query, data;
 				if (typeof options == 'string') {
 					url = options;
@@ -107,8 +115,18 @@ function instrumentBundle (opt) {
 					(newOptions.body && newOptions.body.length ? ' (payload: ' + newOptions.body.length + ' bytes of ' + newOptions.headers['Content-Type'] + ')' : ''));
 				return newOptions;
 			}),
-			promises = requests.map(function (options) {
-				return options instanceof Error ? options : requestAsync(options);
+			promises = requests.map(function (options, index) {
+				if(options instanceof Error) {
+					onItemFinish(req, options, index, payload);
+					return options;
+				}
+				var promise = requestAsync(options);
+				promise.then(function (value) {
+					onItemFinish(req, value, index, payload);
+				}).catch(function (value) {
+					onItemFinish(req, value, index, payload);
+				});
+				return promise;
 			});
 		par(promises).then(function (results) {
 			setHeaders(results, res);
@@ -139,7 +157,9 @@ function instrumentBundle (opt) {
 				});
 			});
 			debug('<= RETURNED bundle of ' + results.length);
-			res.set('Content-Type', 'application/json; charset=utf-8').json({bundle: 'bundle', results: results});
+			onBundleFinish(req);
+			res.set('Content-Type', 'application/json; charset=utf-8').
+				json(processBundle({bundle: 'bundle', results: results}, req));
 		});
 	};
 }
