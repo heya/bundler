@@ -114,7 +114,8 @@ function instrumentBundle (opt) {
 				}
 				newOptions.headers.Cookie = req.get('Cookie');
 				debug('<= ' + newOptions.method + ' ' + url + (url !== newOptions.url ? ' => ' + newOptions.url : '') +
-					(newOptions.body && newOptions.body.length ? ' (payload: ' + newOptions.body.length + ' bytes of ' + newOptions.headers['Content-Type'] + ')' : ''));
+					(newOptions.body && newOptions.body.length ?
+						' (payload: ' + newOptions.body.length + ' bytes of ' + newOptions.headers['Content-Type'] + ')' : ''));
 				return newOptions;
 			}),
 			promises = requests.map(function (options, index) {
@@ -160,13 +161,14 @@ function instrumentBundle (opt) {
 					}
 				}, req);
 			});
-			debug('<= RETURNED bundle of ' + results.length);
 			onBundleFinish(req);
+			var bundleTime = Date.now() - bundleStart;
+			debug('<= RETURNED bundle of ' + results.length + ' in ' + bundleTime + 'ms');
 			res.set('Content-Type', 'application/json; charset=utf-8').
 				json(processBundle({
 					bundle: 'bundle',
 					results: results,
-					time: Date.now() - bundleStart
+					time: bundleTime
 				}, req));
 		});
 	};
