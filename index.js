@@ -63,8 +63,10 @@ function instrumentBundle (opt) {
 			return;
 		}
 		debug('=> RECEIVED bundle of ' + payload.length + ': ' + payload.map(function (o) { return o.url || o; }).join(', '));
+		var bundleStart = Date.now(), itemStart = [];
 		onBundleStart(req);
 		var requests = payload.map(function (options, index) {
+				itemStart[index] = Date.now();
 				onItemStart(req, options, index, payload);
 				var newOptions = {}, url, query, data;
 				if (typeof options == 'string') {
@@ -133,8 +135,9 @@ function instrumentBundle (opt) {
 			results = results.map(function (response, index) {
 				var options = normalizeOptions(payload[index]);
 				if (response instanceof Error) {
-					return {
+					return processFailure({
 						options: options,
+						time: Date.now() - itemStart[index],
 						response: {
 							status: 500,
 							statusText: response.message,
@@ -142,11 +145,12 @@ function instrumentBundle (opt) {
 							responseText: '',
 							headers: ''
 						}
-					};
+					}, req);
 				}
 				var head = response[0];
 				return processResult({
 					options: options,
+					time: Date.now() - itemStart[index],
 					response: {
 						status: head.statusCode,
 						statusText: head.statusMessage,
@@ -154,12 +158,16 @@ function instrumentBundle (opt) {
 						responseText: response[1].toString(),
 						headers: makeHeaders(head.rawHeaders, options.mime)
 					}
-				});
+				}, req);
 			});
 			debug('<= RETURNED bundle of ' + results.length);
 			onBundleFinish(req);
 			res.set('Content-Type', 'application/json; charset=utf-8').
-				json(processBundle({bundle: 'bundle', results: results}, req));
+				json(processBundle({
+					bundle: 'bundle',
+					results: results,
+					time: Date.now() - bundleStart
+				}, req));
 		});
 	};
 }
