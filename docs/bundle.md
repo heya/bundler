@@ -23,8 +23,8 @@ In order to use bundling, a simple server-side code is required. A reference imp
 
 I/O is a major bottleneck of web applications. Every request incurs penalties including:
 
-* DNS lookup (expensive, but ammortized after the first access).
-* Establishing a connection (ammortized by HTTP/1.1 by reuse a connection).
+* DNS lookup (expensive, but amortized after the first access).
+* Establishing a connection (amortized by HTTP/1.1 by reuse a connection).
 * Network lag for every single I/O action (especially suffered by mobile users).
 * Compression inefficiency (when similar payload compressed separately).
 
@@ -272,7 +272,7 @@ In many cases we want to collect requests made during a current thread. If this 
 
 ### `io.bundle.detect()`
 
-This property is related to unbundling. It defines a function that receives a data object as a single argument, and returns an array of responces for
+This property is related to unbundling. It defines a function that receives a data object as a single argument, and returns an array of responses for
 unbundling, or `null`.
 
 The default implementation does following actions:
@@ -296,7 +296,7 @@ If we already collecting a bundle (see `io.bundle.isStarted()` above), it adds t
 It is a helper. This property defines a function that submits a request with a related bundle. It takes two arguments:
 
 * `options` &mdash; the standard `options` object for a main request.
-* `bundle` &mdash; an array of `options` for a supplimental bundle.
+* `bundle` &mdash; an array of `options` for a supplemental bundle.
 
 It returns a promise for the main request.
 
