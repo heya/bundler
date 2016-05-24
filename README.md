@@ -11,6 +11,29 @@ Intelligent I/O for browsers: a bundler endpoint for node.js.
 
 A flexible customizable endpoint for [Express](http://expressjs.com/) on node.js that implements [heya-io](https://github.com/heya/io)'s bundling [protocol](https://github.com/heya/bundler/wiki/Protocol). It is a reference implementation for its `bundle()` facility.
 
+Example of use:
+
+```js
+var bundler = require('heya-bundler');
+var express = require('express');
+
+var app = express();
+var router = express.Router();
+
+router.put('/', instrumentBundle({
+  isUrlAcceptable: function (url) {
+    // accept only local absolute URLs
+    return /^\/\w/.test(url);
+  }
+}));
+
+app.use('/bundle', router);
+
+// the rest of the setup
+```
+
+All supported parameters can be found in [Instrumentation](https://github.com/heya/bundler/wiki/Instrumentation).
+
 ## How to install
 
 ```sh
@@ -27,6 +50,7 @@ BSD or AFL &mdash; your choice
 
 ## Versions
 
+- 1.0.2 &mdash; *Minor documentation update.*
 - 1.0.1 &mdash; *Sorted out dependencies.*
 - 1.0.0 &mdash; *Starts the new generation.*
 

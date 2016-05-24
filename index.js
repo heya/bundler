@@ -23,10 +23,10 @@ function defaultSetHeaders (results, res) {
 
 
 function instrumentBundle (opt) {
-	var maxRequests = opt.maxRequests || 20,
-		isUrlAcceptable = opt.isUrlAcceptable,
-		resolveUrl = opt.resolveUrl,
-		setHeaders = opt.setHeaders || defaultSetHeaders,
+	var isUrlAcceptable = opt.isUrlAcceptable,
+		maxRequests = opt.maxRequests || 20,
+		resolveUrl  = opt.resolveUrl  || identity,
+		setHeaders  = opt.setHeaders  || defaultSetHeaders,
 		processResult  = opt.processResult  || identity,
 		processFailure = opt.processFailure || identity,
 		processBundle  = opt.processBundle  || identity,
