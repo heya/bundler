@@ -9,7 +9,7 @@ Intelligent I/O for browsers: a bundler endpoint for node.js.
 
 ## What is it?
 
-A flexible customizable endpoint for [Express](http://expressjs.com/) on node.js that implements [heya-io](https://github.com/heya/io)'s bundling protocol. It is a reference implementation for its `bundle()` facility.
+A flexible customizable endpoint for [Express](http://expressjs.com/) on node.js that implements [heya-io](https://github.com/heya/io)'s bundling [protocol](https://github.com/heya/bundler/wiki/Protocol). It is a reference implementation for its `bundle()` facility.
 
 ## How to install
 
@@ -27,6 +27,7 @@ BSD or AFL &mdash; your choice
 
 ## Versions
 
+- 1.0.1 &mdash; *Sorted out dependencies.*
 - 1.0.0 &mdash; *Starts the new generation.*
 
 

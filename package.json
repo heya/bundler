@@ -1,6 +1,6 @@
 {
   "name": "heya-bundler",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Intelligent I/O for browsers, and its counterpart for node.js.",
   "main": "index.js",
   "directories": {
@@ -27,12 +27,12 @@
   "devDependencies": {
     "body-parser": "^1.15.0",
     "express": "^4.13.4",
-    "heya-unit": "^0.3.0"
+    "heya-unit": "^0.3.0",
+    "phantomjs-prebuilt": "^2.1.7"
   },
   "dependencies": {
     "debug": "^2.2.0",
     "heya-async": "^1.0.0",
-    "phantomjs-prebuilt": "^2.1.7",
     "request": "^2.71.0"
   }
 }
