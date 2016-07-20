@@ -63,10 +63,10 @@ function instrumentBundle (opt) {
 			return;
 		}
 		debug('=> RECEIVED bundle of ' + payload.length + ': ' + payload.map(function (o) { return o.url || o; }).join(', '));
-		var bundleStart = Date.now(), itemStart = [];
+		var bundleStart = Date.now(), itemTime = [];
 		onBundleStart(req);
 		var requests = payload.map(function (options, index) {
-				itemStart[index] = Date.now();
+				itemTime[index] = Date.now();
 				onItemStart(req, options, index, payload);
 				var newOptions = {}, url, query, data;
 				if (typeof options == 'string') {
@@ -121,15 +121,18 @@ function instrumentBundle (opt) {
 			promises = requests.map(function (options, index) {
 				if(options instanceof Error) {
 					onItemFinish(req, options, index, payload);
+					itemTime[index] = Date.now() - itemTime[index];
 					return options;
 				}
-				var promise = requestAsync(options);
-				promise.then(function (value) {
+				return requestAsync(options).then(function (value) {
 					onItemFinish(req, value, index, payload);
+					itemTime[index] = Date.now() - itemTime[index];
+					return value;
 				}).catch(function (value) {
 					onItemFinish(req, value, index, payload);
+					itemTime[index] = Date.now() - itemTime[index];
+					return value;
 				});
-				return promise;
 			});
 		par(promises).then(function (results) {
 			setHeaders(results, res);
@@ -138,20 +141,22 @@ function instrumentBundle (opt) {
 				if (response instanceof Error) {
 					return processFailure({
 						options: options,
-						time: Date.now() - itemStart[index],
+						time: itemTime[index],
 						response: {
 							status: 500,
 							statusText: response.message,
 							responseType: '',
-							responseText: '',
-							headers: ''
+							responseText: 'heya/bundler encountered an error: ' +
+								(response.name ? '[' + response.name + '] ' : '') +
+								(response.message || '(unspecified)'),
+							headers: 'Content-Type: text/plain; charset=utf-8'
 						}
 					}, req);
 				}
 				var head = response[0];
 				return processResult({
 					options: options,
-					time: Date.now() - itemStart[index],
+					time: itemTime[index],
 					response: {
 						status: head.statusCode,
 						statusText: head.statusMessage,
