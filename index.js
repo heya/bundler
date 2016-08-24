@@ -21,6 +21,8 @@ function defaultSetHeaders (results, res) {
 	});
 }
 
+function localLog (_, msg) { debug(msg); }
+
 
 function instrumentBundle (opt) {
 	var isUrlAcceptable = opt.isUrlAcceptable,
@@ -33,36 +35,39 @@ function instrumentBundle (opt) {
 		onBundleStart  = opt.onBundleStart  || identity,
 		onBundleFinish = opt.onBundleFinish || identity,
 		onItemStart  = opt.onItemStart  || identity,
-		onItemFinish = opt.onItemFinish || identity;
+		onItemFinish = opt.onItemFinish || identity,
+		log = opt.log || localLog;
 	return function bundle (req, res) {
-		debug('=> ' + req.method + ' ' + req.url +
-			  (req.body && req.body.length ? ' (payload: ' + req.body.length + ' bytes of ' + req.get('content-type') + ')' : ''));
+		log('info', '=> ' + req.method + ' ' + req.url +
+			(req.body && req.body.length ? ' (payload: ' + req.body.length + ' bytes of ' + req.get('content-type') + ')' : ''),
+			{method: req.method, url: req.url, length: req.body && req.body.length || 0, contentType: req.get('content-type')});
 		// no request body
 		if (!req.body || !req.body.length) {
-			debug('no payload');
+			log('error', 'no payload');
 			res.status(500).type('text/plain').send('No payload');
 			return;
 		}
 		// wrong payload
 		var payload = JSON.parse(req.body.toString());
 		if (!(payload instanceof Array)) {
-			debug('wrong payload');
+			log('error', 'wrong payload');
 			res.status(500).type('text/plain').send('Wrong payload');
 			return;
 		}
 		// empty payload
 		if (!payload.length) {
-			debug('empty payload');
+			log('warn', 'empty payload');
 			res.json({bundle: 'bundle', results: []});
 			return;
 		}
 		// payload is too large
 		if (payload.length > maxRequests) {
-			debug('large payload');
+			log('error', 'large payload');
 			res.status(500).type('text/plain').send('Large payload');
 			return;
 		}
-		debug('=> RECEIVED bundle of ' + payload.length + ': ' + payload.map(function (o) { return o.url || o; }).join(', '));
+		log('info', '=> RECEIVED bundle of ' + payload.length + ': ' + payload.map(function (o) { return o.url || o; }).join(', '),
+			payload.map(function (o) { return o.url || o; }));
 		var bundleStart = Date.now(), itemTime = [];
 		onBundleStart(req);
 		var requests = payload.map(function (options, index) {
@@ -113,9 +118,11 @@ function instrumentBundle (opt) {
 					newOptions.headers.Accept = 'application/json';
 				}
 				newOptions.headers.Cookie = req.get('Cookie');
-				debug('<= ' + newOptions.method + ' ' + url + (url !== newOptions.url ? ' => ' + newOptions.url : '') +
+				log('info', '<= ' + newOptions.method + ' ' + url + (url !== newOptions.url ? ' => ' + newOptions.url : '') +
 					(newOptions.body && newOptions.body.length ?
-						' (payload: ' + newOptions.body.length + ' bytes of ' + newOptions.headers['Content-Type'] + ')' : ''));
+						' (payload: ' + newOptions.body.length + ' bytes of ' + newOptions.headers['Content-Type'] + ')' : ''),
+					{method: newOptions.method, url: newOptions.url, length: newOptions.body && newOptions.body.length || 0,
+					contentType: newOptions.headers['Content-Type']});
 				return newOptions;
 			}),
 			promises = requests.map(function (options, index) {
@@ -168,7 +175,7 @@ function instrumentBundle (opt) {
 			});
 			onBundleFinish(req);
 			var bundleTime = Date.now() - bundleStart;
-			debug('<= RETURNED bundle of ' + results.length + ' in ' + bundleTime + 'ms');
+			log('info', '<= RETURNED bundle of ' + results.length + ' in ' + bundleTime + 'ms', {length: results.length, time: bundleTime});
 			res.set('Content-Type', 'application/json; charset=utf-8').
 				json(processBundle({
 					bundle: 'bundle',

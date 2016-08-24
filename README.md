@@ -50,6 +50,7 @@ BSD or AFL &mdash; your choice
 
 ## Versions
 
+- 1.0.4 &mdash; *Added a way to customize logging.*
 - 1.0.3 &mdash; *More accurate calculations of spent time and better error reports.*
 - 1.0.2 &mdash; *Minor documentation update.*
 - 1.0.1 &mdash; *Sorted out dependencies.*
