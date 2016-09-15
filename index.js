@@ -3,10 +3,25 @@
 var debug     = require('debug')('heya-io:bundle');
 var request   = require('request');
 var par       = require('heya-async').par;
-var promisify = require('heya-async/promisify');
 
 
-var requestAsync = promisify(request, null, true);
+function requestAsync () {
+	var args = Array.prototype.slice.call(arguments, 0);
+	return new Promise(function(resolve, reject){
+		args.push(function (error) {
+			if (error) {
+				reject(error);
+			} else {
+				resolve(Array.prototype.slice.call(arguments, 1));
+			}
+		});
+		try {
+			request.apply(null, args);
+		} catch (e) {
+			reject(e);
+		}
+	});
+}
 requestAsync.original = request;
 
 
@@ -44,14 +59,14 @@ function instrumentBundle (opt) {
 		// no request body
 		if (!req.body || !req.body.length) {
 			log('error', 'no payload');
-			res.status(500).type('text/plain').send('No payload');
+			res.status(400).type('text/plain').send('No payload');
 			return;
 		}
 		// wrong payload
-		var payload = JSON.parse(req.body.toString());
+		var payload = parseBody(req.body.toString());
 		if (!(payload instanceof Array)) {
 			log('error', 'wrong payload');
-			res.status(500).type('text/plain').send('Wrong payload');
+			res.status(400).type('text/plain').send('Wrong payload');
 			return;
 		}
 		// empty payload
@@ -63,7 +78,7 @@ function instrumentBundle (opt) {
 		// payload is too large
 		if (payload.length > maxRequests) {
 			log('error', 'large payload');
-			res.status(500).type('text/plain').send('Large payload');
+			res.status(400).type('text/plain').send('Large payload');
 			return;
 		}
 		log('info', '=> RECEIVED bundle of ' + payload.length + ': ' + payload.map(function (o) { return o.url || o; }).join(', '),
@@ -224,6 +239,14 @@ function makeHeaders (rawHeaders, mime) {
 
 function normalizeOptions (options) {
 	return typeof options == 'string' ? {url: options, method: 'GET'} : options;
+}
+
+function parseBody (body) {
+	try {
+		return JSON.parse(body);
+	} catch (e) {
+		return null;
+	}
 }
 
 
