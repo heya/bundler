@@ -50,6 +50,7 @@ BSD or AFL &mdash; your choice
 
 ## Versions
 
+- 1.0.7 &mdash; *Refreshed dependencies.*
 - 1.0.6 &mdash; *Corrected links. No code change.*
 - 1.0.5 &mdash; *Switched from 500 to 400 to indicate bad requests, checked JSON and request for exceptions.*
 - 1.0.4 &mdash; *Added a way to customize logging.*
@@ -64,6 +65,6 @@ BSD or AFL &mdash; your choice
 [deps-image]:     https://img.shields.io/david/heya/bundler.svg
 [deps-url]:       https://david-dm.org/heya/bundler
 [dev-deps-image]: https://img.shields.io/david/dev/heya/bundler.svg
-[dev-deps-url]:   https://david-dm.org/heya/bundler#info=devDependencies
+[dev-deps-url]:   https://david-dm.org/heya/bundler?type=dev
 [travis-image]:   https://img.shields.io/travis/heya/bundler.svg
 [travis-url]:     https://travis-ci.org/heya/bundler
