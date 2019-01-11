@@ -1,13 +1,14 @@
 {
   "name": "heya-bundler",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "Intelligent I/O for browsers, and its counterpart for node.js.",
-  "main": "index.js",
+  "main": "main.js",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "test": "node_modules/.bin/phantomjs tests/phantom.js"
+    "start": "node tests/server.js",
+    "test": "node tests/puppeteer.js"
   },
   "repository": {
     "type": "git",
@@ -25,14 +26,14 @@
   },
   "homepage": "https://github.com/heya/bundler",
   "devDependencies": {
-    "body-parser": "^1.18.2",
-    "express": "^4.16.2",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
     "heya-unit": "^0.3.0",
-    "phantomjs-prebuilt": "^2.1.16"
+    "puppeteer": "^1.11.0"
   },
   "dependencies": {
-    "debug": "^3.1.0",
+    "debug": "^4.1.1",
     "heya-async": "^1.0.1",
-    "request": "^2.83.0"
+    "heya-io-node": "^1.1.3"
   }
 }

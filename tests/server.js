@@ -6,17 +6,17 @@ var debug = require('debug')('heya-io:server');
 var express = require('express');
 var bodyParser = require('body-parser');
 
-var bundler = require('../index');
+var bundler = require('heya-bundler');
 
 // The APP
 
 var app = express();
 
-// add middleware
 app.use(bodyParser.raw({type: '*/*'}));
-app.use(express.static(path.join(__dirname, '..')));
 
-app.all('/api', function (req, res) {
+var counter = 0;
+
+app.all('/api*', function (req, res) {
 	if (req.query.status) {
 		var status = parseInt(req.query.status, 10);
 		if (isNaN(status) || status < 100 || status >= 600) {
@@ -42,9 +42,24 @@ app.all('/api', function (req, res) {
 			originalUrl: req.originalUrl,
 			headers: req.headers,
 			body: req.body && req.body.length && req.body.toString() || null,
-			query: req.query
+			query: req.query,
+			now: Date.now(),
+			counter: counter++
 		};
-	res.jsonp(data);
+	var timeout = 0;
+	if (req.query.timeout) {
+		var timeout = parseInt(req.query.timeout, 10);
+		if (isNaN(timeout) || timeout < 0 || timeout > 60000) {
+			timeout = 0;
+		}
+	}
+	if (timeout) {
+		setTimeout(function () {
+			res.jsonp(data);
+		}, timeout);
+	} else {
+		res.jsonp(data);
+	}
 });
 
 app.put('/bundle', bundler({
@@ -60,6 +75,8 @@ function isUrlAcceptable (uri) {
 function resolveUrl (uri) {
 	return uri.charAt(0) === '/' ? 'http://localhost:3000' + uri : uri;
 }
+
+app.use(express.static(path.join(__dirname, '..')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
