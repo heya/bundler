@@ -1,24 +1,24 @@
 'use strict';
 
-var http = require('http');
-var path = require('path');
-var debug = require('debug')('heya-io:server');
-var express = require('express');
-var bodyParser = require('body-parser');
+const http = require('http');
+const path = require('path');
+const debug = require('debug')('heya-io:server');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-var bundler = require('heya-bundler');
+const bundler = require('../main');
 
 // The APP
 
-var app = express();
+const app = express();
 
 app.use(bodyParser.raw({type: '*/*'}));
 
-var counter = 0;
+let counter = 0;
 
-app.all('/api*', function (req, res) {
+app.all('/api*', (req, res) => {
 	if (req.query.status) {
-		var status = parseInt(req.query.status, 10);
+		let status = parseInt(req.query.status, 10);
 		if (isNaN(status) || status < 100 || status >= 600) {
 			status = 200;
 		}
@@ -34,47 +34,44 @@ app.all('/api*', function (req, res) {
 			res.send('<div>Hello, world!</div>');
 			return;
 	}
-	var data = {
-			method: req.method,
-			protocol: req.protocol,
-			hostname: req.hostname,
-			url: req.url,
-			originalUrl: req.originalUrl,
-			headers: req.headers,
-			body: req.body && req.body.length && req.body.toString() || null,
-			query: req.query,
-			now: Date.now(),
-			counter: counter++
-		};
-	var timeout = 0;
+	const data = {
+		method: req.method,
+		protocol: req.protocol,
+		hostname: req.hostname,
+		url: req.url,
+		originalUrl: req.originalUrl,
+		headers: req.headers,
+		body: (req.body && req.body.length && req.body.toString()) || null,
+		query: req.query,
+		now: Date.now(),
+		counter: counter++
+	};
+	let timeout = 0;
 	if (req.query.timeout) {
-		var timeout = parseInt(req.query.timeout, 10);
+		timeout = parseInt(req.query.timeout, 10);
 		if (isNaN(timeout) || timeout < 0 || timeout > 60000) {
 			timeout = 0;
 		}
 	}
 	if (timeout) {
-		setTimeout(function () {
-			res.jsonp(data);
-		}, timeout);
+		setTimeout(() => res.jsonp(data), timeout);
 	} else {
 		res.jsonp(data);
 	}
 });
 
-app.put('/bundle', bundler({
-	isUrlAcceptable: isUrlAcceptable,
-	resolveUrl: resolveUrl
-}));
+const isUrlAcceptable = uri =>
+	typeof uri == 'string' && !/^\/\//.test(uri) && (uri.charAt(0) === '/' || /^http:\/\/localhost:3000\//.test(uri));
 
-function isUrlAcceptable (uri) {
-	return typeof uri == 'string' && !/^\/\//.test(uri) &&
-		(uri.charAt(0) === '/' || /^http:\/\/localhost:3000\//.test(uri));
-}
+const resolveUrl = uri => (uri.charAt(0) === '/' ? 'http://localhost:3000' + uri : uri);
 
-function resolveUrl (uri) {
-	return uri.charAt(0) === '/' ? 'http://localhost:3000' + uri : uri;
-}
+app.put(
+	'/bundle',
+	bundler({
+		isUrlAcceptable: isUrlAcceptable,
+		resolveUrl: resolveUrl
+	})
+);
 
 app.use(express.static(path.join(__dirname, '..')));
 
@@ -98,33 +95,11 @@ app.use(function(err, req, res, next) {
 // The SERVER
 
 /**
- * Get port from environment and store in Express.
- */
-
-var host = process.env.HOST || 'localhost',
-	port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
-
-/**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
-
-/**
- * Listen on provided port, on provided host, or all network interfaces.
- */
-
-server.listen(port, host);
-server.on('error', onError);
-server.on('listening', onListening);
-
-/**
  * Normalize a port into a number, string, or false.
  */
 
-function normalizePort(val) {
-	var port = parseInt(val, 10);
+const normalizePort = val => {
+	const port = parseInt(val, 10);
 
 	if (isNaN(port)) {
 		// named pipe
@@ -137,27 +112,38 @@ function normalizePort(val) {
 	}
 
 	return false;
-}
+};
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+const host = process.env.HOST || 'localhost',
+	port = normalizePort(process.env.PORT || '3000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+const server = http.createServer(app);
 
 /**
  * Human-readable port description.
  */
 
-function portToString (port) {
-	return typeof port === 'string' ? 'pipe ' + port : 'port ' + port;
-}
-
+const portToString = port => (typeof port === 'string' ? 'pipe ' + port : 'port ' + port);
 
 /**
  * Event listener for HTTP server "error" event.
  */
 
-function onError(error) {
+const onError = error => {
 	if (error.syscall !== 'listen') {
 		throw error;
 	}
 
-	var bind = portToString(port);
+	const bind = portToString(port);
 
 	// handle specific listen errors with friendly messages
 	switch (error.code) {
@@ -172,14 +158,22 @@ function onError(error) {
 		default:
 			throw error;
 	}
-}
+};
 
 /**
  * Event listener for HTTP server "listening" event.
  */
 
-function onListening() {
-	//var addr = server.address();
-	var bind = portToString(port);
+const onListening = () => {
+	// const addr = server.address();
+	const bind = portToString(port);
 	debug('Listening on ' + (host || 'all network interfaces') + ' ' + bind);
-}
+};
+
+/**
+ * Listen on provided port, on provided host, or all network interfaces.
+ */
+
+server.listen(port, host);
+server.on('error', onError);
+server.on('listening', onListening);
