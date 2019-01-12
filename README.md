@@ -50,6 +50,7 @@ BSD or AFL &mdash; your choice
 
 ## Versions
 
+- 1.1.0 &mdash; *Switched from `request` to `heya-io-node`!*
 - 1.0.7 &mdash; *Refreshed dependencies.*
 - 1.0.6 &mdash; *Corrected links. No code change.*
 - 1.0.5 &mdash; *Switched from 500 to 400 to indicate bad requests, checked JSON and request for exceptions.*
