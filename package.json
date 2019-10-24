@@ -29,7 +29,7 @@
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "heya-unit": "^0.3.0",
-    "puppeteer": "^1.11.0"
+    "puppeteer": "^2.0.0"
   },
   "dependencies": {
     "debug": "^4.1.1",
