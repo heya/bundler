@@ -1,11 +1,11 @@
 # Bundler
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/heya/bundler.svg)](https://greenkeeper.io/)
-
 [![Build status][travis-image]][travis-url]
+[![NPM version][npm-image]][npm-url]
+
+[![Greenkeeper][greenkeeper-image]][greenkeeper-url]
 [![Dependencies][deps-image]][deps-url]
 [![devDependencies][dev-deps-image]][dev-deps-url]
-[![NPM version][npm-image]][npm-url]
 
 Intelligent I/O for browsers: a bundler endpoint for node.js.
 
@@ -63,11 +63,13 @@ BSD or AFL &mdash; your choice
 - 1.0.0 &mdash; *Starts the new generation.*
 
 
-[npm-image]:      https://img.shields.io/npm/v/heya-bundler.svg
-[npm-url]:        https://npmjs.org/package/heya-bundler
-[deps-image]:     https://img.shields.io/david/heya/bundler.svg
-[deps-url]:       https://david-dm.org/heya/bundler
-[dev-deps-image]: https://img.shields.io/david/dev/heya/bundler.svg
-[dev-deps-url]:   https://david-dm.org/heya/bundler?type=dev
-[travis-image]:   https://img.shields.io/travis/heya/bundler.svg
-[travis-url]:     https://travis-ci.org/heya/bundler
+[npm-image]:         https://img.shields.io/npm/v/heya-bundler.svg
+[npm-url]:           https://npmjs.org/package/heya-bundler
+[deps-image]:        https://img.shields.io/david/heya/bundler.svg
+[deps-url]:          https://david-dm.org/heya/bundler
+[dev-deps-image]:    https://img.shields.io/david/dev/heya/bundler.svg
+[dev-deps-url]:      https://david-dm.org/heya/bundler?type=dev
+[travis-image]:      https://img.shields.io/travis/heya/bundler.svg
+[travis-url]:        https://travis-ci.org/heya/bundler
+[greenkeeper-image]: https://badges.greenkeeper.io/heya/bundler.svg
+[greenkeeper-url]:   https://greenkeeper.io/
