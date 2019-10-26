@@ -52,6 +52,7 @@ BSD or AFL &mdash; your choice
 
 ## Versions
 
+- 1.1.1 &mdash; *Refreshed dependencies.*
 - 1.1.0 &mdash; *Switched from `request` to `heya-io-node`!*
 - 1.0.7 &mdash; *Refreshed dependencies.*
 - 1.0.6 &mdash; *Corrected links. No code change.*
