@@ -1,6 +1,6 @@
 {
   "name": "heya-bundler",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Intelligent I/O for browsers, and its counterpart for node.js.",
   "main": "main.js",
   "directories": {
@@ -8,7 +8,9 @@
   },
   "scripts": {
     "start": "node tests/server.js",
-    "test": "node tests/puppeteer.js"
+    "test-chrome": "node tests/puppeteer-chrome.js",
+    "test-firefox": "node tests/puppeteer-firefox.js",
+    "test": "npm run test-chrome && npm run test-firefox"
   },
   "repository": {
     "type": "git",
@@ -29,7 +31,8 @@
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "heya-unit": "^0.3.0",
-    "puppeteer": "^2.0.0"
+    "puppeteer": "^2.0.0",
+    "puppeteer-firefox": "^0.5.0"
   },
   "dependencies": {
     "debug": "^4.1.1",

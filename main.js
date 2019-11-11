@@ -6,11 +6,27 @@ const {par} = require('heya-async');
 
 const identity = x => x;
 
+const blackListedHeaders = {
+  'content-type': 1,
+  'content-length': 1,
+  'content-encoding': 1,
+  'accept-ranges': 1,
+  'cache-control': 1,
+  'last-modified': 1,
+  age: 1,
+  date: 1,
+  etag: 1,
+  expires: 1,
+  pragma: 1,
+  status: 1,
+  vary: 1
+};
+
 const defaultSetHeaders = (results, res) =>
   results.forEach(response => {
     if (!(response instanceof Error)) {
       const headers = io.getHeaders(response);
-      Object.keys(headers).forEach(key => res.set(key, headers[key]));
+      Object.keys(headers).forEach(key => blackListedHeaders[key.toLowerCase()] !== 1 && res.set(key, headers[key]));
     }
   });
 

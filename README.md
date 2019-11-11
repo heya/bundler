@@ -22,7 +22,7 @@ var express = require('express');
 var app = express();
 var router = express.Router();
 
-router.put('/', instrumentBundle({
+router.put('/', bundler({
   isUrlAcceptable: function (url) {
     // accept only local absolute URLs
     return /^\/\w/.test(url);
@@ -52,6 +52,7 @@ BSD or AFL &mdash; your choice
 
 ## Versions
 
+- 1.1.2 &mdash; *Added blacklisted headers that should not be copied by default.*
 - 1.1.1 &mdash; *Refreshed dependencies.*
 - 1.1.0 &mdash; *Switched from `request` to `heya-io-node`!*
 - 1.0.7 &mdash; *Refreshed dependencies.*
