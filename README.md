@@ -52,6 +52,7 @@ BSD or AFL &mdash; your choice
 
 ## Versions
 
+- 1.1.3 &mdash; *Refreshed dependencies.*
 - 1.1.2 &mdash; *Added blacklisted headers that should not be copied by default.*
 - 1.1.1 &mdash; *Refreshed dependencies.*
 - 1.1.0 &mdash; *Switched from `request` to `heya-io-node`!*
