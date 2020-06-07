@@ -35,7 +35,7 @@
     "puppeteer-firefox": "^0.5.1"
   },
   "dependencies": {
-    "debug": "^4.1.1",
+    "debug": "^4.2.0",
     "heya-async": "^1.0.1",
     "heya-io-node": "^1.1.7"
   }
