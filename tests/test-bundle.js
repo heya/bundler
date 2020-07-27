@@ -1,15 +1,15 @@
-define(['module', 'heya-unit'], function(module, unit) {
+define(['module', 'heya-unit'], function (module, unit) {
   'use strict';
 
   function io(data, callback, errback) {
     var xhr = new XMLHttpRequest();
     if (callback) {
-      xhr.addEventListener('load', function() {
+      xhr.addEventListener('load', function () {
         callback(xhr);
       });
     }
     if (errback) {
-      xhr.addEventListener('error', function() {
+      xhr.addEventListener('error', function () {
         errback(xhr);
       });
     }
@@ -24,7 +24,7 @@ define(['module', 'heya-unit'], function(module, unit) {
       var x = t.startAsync('test_bundle_of_1');
       io(
         ['http://localhost:3000/api'],
-        function(xhr) {
+        function (xhr) {
           eval(t.TEST('xhr.status === 200'));
           eval(t.TEST('/^application\\/json\\b/.test(xhr.getResponseHeader("Content-Type"))'));
 
@@ -44,7 +44,7 @@ define(['module', 'heya-unit'], function(module, unit) {
 
           x.done();
         },
-        function() {
+        function () {
           t.test(false, "We shouldn't be here.");
           x.done();
         }
@@ -70,7 +70,7 @@ define(['module', 'heya-unit'], function(module, unit) {
             query: {status: 401}
           }
         ],
-        function(xhr) {
+        function (xhr) {
           eval(t.TEST('xhr.status === 200'));
           eval(t.TEST('/^application\\/json\\b/.test(xhr.getResponseHeader("Content-Type"))'));
 
@@ -115,7 +115,7 @@ define(['module', 'heya-unit'], function(module, unit) {
 
           x.done();
         },
-        function() {
+        function () {
           t.test(false, "We shouldn't be here.");
           x.done();
         }

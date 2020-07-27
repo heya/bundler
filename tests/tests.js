@@ -1,4 +1,4 @@
-define(['heya-unit', './test-bundle'], function(unit) {
+define(['heya-unit', './test-bundle'], function (unit) {
   'use strict';
 
   unit.run();

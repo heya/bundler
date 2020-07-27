@@ -60,8 +60,7 @@ app.all('/api*', (req, res) => {
   }
 });
 
-const isUrlAcceptable = uri =>
-  typeof uri == 'string' && !/^\/\//.test(uri) && (uri.charAt(0) === '/' || /^http:\/\/localhost:3000\//.test(uri));
+const isUrlAcceptable = uri => typeof uri == 'string' && !/^\/\//.test(uri) && (uri.charAt(0) === '/' || /^http:\/\/localhost:3000\//.test(uri));
 
 const resolveUrl = uri => (uri.charAt(0) === '/' ? 'http://localhost:3000' + uri : uri);
 
@@ -76,7 +75,7 @@ app.put(
 app.use(express.static(path.join(__dirname, '..')));
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
@@ -84,7 +83,7 @@ app.use(function(req, res, next) {
 
 // error handlers
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // for simplicity we don't use fancy HTML formatting opting for a plain text
   res.status(err.status || 500);
   res.set('Content-Type', 'text/plain');

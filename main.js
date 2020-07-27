@@ -85,13 +85,7 @@ const instrumentBundle = opt => {
   return (req, res) => {
     log(
       'info',
-      '=> ' +
-        req.method +
-        ' ' +
-        req.url +
-        (req.body && req.body.length
-          ? ' (payload: ' + req.body.length + ' bytes of ' + req.get('content-type') + ')'
-          : ''),
+      '=> ' + req.method + ' ' + req.url + (req.body && req.body.length ? ' (payload: ' + req.body.length + ' bytes of ' + req.get('content-type') + ')' : ''),
       {
         method: req.method,
         url: req.url,
@@ -102,20 +96,14 @@ const instrumentBundle = opt => {
     // no request body
     if (!req.body || !req.body.length) {
       log('error', 'no payload');
-      res
-        .status(400)
-        .type('text/plain')
-        .send('No payload');
+      res.status(400).type('text/plain').send('No payload');
       return;
     }
     // wrong payload
     const payload = parseBody(req.body.toString());
     if (!(payload instanceof Array)) {
       log('error', 'wrong payload');
-      res
-        .status(400)
-        .type('text/plain')
-        .send('Wrong payload');
+      res.status(400).type('text/plain').send('Wrong payload');
       return;
     }
     // empty payload
@@ -127,10 +115,7 @@ const instrumentBundle = opt => {
     // payload is too large
     if (payload.length > maxRequests) {
       log('error', 'large payload');
-      res
-        .status(400)
-        .type('text/plain')
-        .send('Large payload');
+      res.status(400).type('text/plain').send('Large payload');
       return;
     }
     log(
@@ -139,11 +124,11 @@ const instrumentBundle = opt => {
         payload.length +
         ': ' +
         payload
-          .map(function(o) {
+          .map(function (o) {
             return o.url || o;
           })
           .join(', '),
-      payload.map(function(o) {
+      payload.map(function (o) {
         return o.url || o;
       })
     );
@@ -217,10 +202,7 @@ const instrumentBundle = opt => {
                 status: 500,
                 statusText: response.message,
                 responseType: '',
-                responseText:
-                  'heya/bundler encountered an error: ' +
-                  (response.name ? '[' + response.name + '] ' : '') +
-                  (response.message || '(unspecified)'),
+                responseText: 'heya/bundler encountered an error: ' + (response.name ? '[' + response.name + '] ' : '') + (response.message || '(unspecified)'),
                 headers: 'Content-Type: text/plain; charset=utf-8'
               }
             },
