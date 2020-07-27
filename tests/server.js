@@ -10,6 +10,17 @@ const bundler = require('../main');
 
 // The APP
 
+const rep = (s, n) => {
+  if (n <= 0) return '';
+  let result = '';
+  for (let mask = 1, buffer = s; n; mask <<= 1, buffer += buffer) {
+    if (!(n & mask)) continue;
+    result += buffer;
+    n -= mask;
+  }
+  return result;
+};
+
 const app = express();
 
 app.use(bodyParser.raw({type: '*/*'}));
@@ -33,6 +44,12 @@ app.all('/api*', (req, res) => {
       res.set('Content-Type', 'application/xml');
       res.send('<div>Hello, world!</div>');
       return;
+  }
+  if (req.query.pattern && /^\d+$/.test(req.query.repeat)) {
+    res.set('Content-Type', 'text/plain; charset=utf-8');
+    const data = rep(req.query.pattern, +req.query.repeat);
+    res.send(data);
+    return;
   }
   const data = {
     method: req.method,

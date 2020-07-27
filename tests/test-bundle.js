@@ -120,6 +120,51 @@ define(['module', 'heya-unit'], function (module, unit) {
           x.done();
         }
       );
+    },
+    function test_bundle_with_unicode(t) {
+      const x = t.startAsync('test_bundle_with_unicode');
+      const pattern = '一鸟在手胜过双鸟在林。',
+        repeat = 100000;
+      io(
+        [
+          {
+            url: 'http://localhost:3000/api',
+            query: {pattern, repeat}
+          }
+        ],
+        xhr => {
+          eval(t.TEST('xhr.status === 200'));
+          eval(t.TEST('/^application\\/json\\b/.test(xhr.getResponseHeader("Content-Type"))'));
+
+          const response = JSON.parse(xhr.responseText);
+          eval(t.TEST('response.bundle === "bundle"'));
+          eval(t.TEST('response.results instanceof Array'));
+          eval(t.TEST('response.results.length === 1'));
+
+          eval(t.TEST('response.results[0].options.url === "http://localhost:3000/api"'));
+          eval(t.TEST('response.results[0].options.method === "GET" || !response.results[0].options.method'));
+          eval(t.TEST('response.results[0].response.status === 200'));
+
+          const data = response.results[0].response.responseText;
+          eval(t.TEST('data.length === pattern.length * repeat'));
+
+          // let index = -1;
+          // for (let i = 0; i < repeat; ++i) {
+          //   const slice = data.substr(i * pattern.length, pattern.length);
+          //   if (slice !== pattern) {
+          //     index = i * pattern.length;
+          //     break;
+          //   }
+          // }
+          // eval(t.TEST('index < 0'));
+
+          x.done();
+        },
+        () => {
+          t.test(false, "We shouldn't be here.");
+          x.done();
+        }
+      );
     }
   ]);
 
