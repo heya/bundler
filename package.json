@@ -35,7 +35,7 @@
   "dependencies": {
     "debug": "^4.1.1",
     "heya-async": "^1.0.1",
-    "heya-io-node": "^1.2.0"
+    "heya-io-node": "^1.3.0"
   },
   "files": [
     "/*.js",
